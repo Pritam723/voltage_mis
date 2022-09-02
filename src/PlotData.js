@@ -4,20 +4,31 @@ import { Button } from "primereact/button";
 import Plotly from "plotly.js-dist-min";
 import Plot from "react-plotly.js";
 
-export default function PlotData() {
-  var trace1 = {
-    x: [1, 2, 3, 4],
-    y: [10, 15, 13, 17],
-    type: "scatter",
+export default function PlotData(props) {
+  //   let voltagePlot1 = {
+  //     x: props.allDateTime,
+  //     y: props.voltageBus1,
+  //     type: "line",
+  //   };
+  //   let voltagePlot2 = {
+  //     x: props.allDateTime,
+  //     y: props.voltageBus2,
+  //     type: "line",
+  //   };
+  console.log(props.allDateTime);
+
+  let voltagePlot1 = {
+    x: props.allDateTime,
+    y: props.voltageBus1,
+    type: "line",
+  };
+  let voltagePlot2 = {
+    x: props.allDateTime,
+    y: props.voltageBus2,
+    type: "line",
   };
 
-  var trace2 = {
-    x: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-    y: [16, 5, 11, 9, 16, 5, 11, 9, 16, 5],
-    type: "scatter",
-  };
-
-  var data = [trace1];
+  var data = [voltagePlot1, voltagePlot2];
 
   return (
     <Plot

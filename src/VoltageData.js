@@ -17,23 +17,55 @@ export default function VoltageData() {
   const [endDate, setEndDate] = useState(null);
   const [selectedSubstation, setSelectedSubstation] = useState(null);
   const [substations, setSubstations] = useState(null);
+  const [voltageBus1, setVoltageBus1] = useState([]);
+  const [voltageBus2, setVoltageBus2] = useState([]);
+  const [allDateTime, setAllDateTime] = useState([]);
 
   const onSubstationChange = (e) => {
     setSelectedSubstation(e.value);
+    console.log(e.value.name);
+  };
+
+  const fetchVoltageData = () => {
+    console.log("I am called fetchVoltageData");
+    axios
+      .get(
+        "//10.3.200.63:5001/getVoltageData?startDate=" +
+          moment(startDate).format("YYYY-MM-DD") +
+          "&endDate=" +
+          moment(endDate).format("YYYY-MM-DD") +
+          "&stationName=" +
+          selectedSubstation.name
+      )
+      .then((response) => {
+        // console.log(response);
+        setVoltageBus1(response.data.voltageBus1);
+        setVoltageBus2(response.data.voltageBus2);
+        setAllDateTime(response.data.allDateTime);
+      })
+      .catch((error) => {});
   };
 
   useEffect(() => {
-    axios
-      .get("//10.3.200.63:5001/names?startDate=2022-01-01&endDate=2022-01-04")
-      .then((response) => {
-        const allSubStation = response.data.map((item) => ({
-          name: item,
-          code: item,
-        }));
-        setSubstations(allSubStation);
-      })
-      .catch((error) => {});
-  }, []);
+    console.log("I am called");
+    if (startDate && endDate) {
+      axios
+        .get(
+          "//10.3.200.63:5001/names?startDate=" +
+            moment(startDate).format("YYYY-MM-DD") +
+            "&endDate=" +
+            moment(endDate).format("YYYY-MM-DD")
+        )
+        .then((response) => {
+          const allSubStation = response.data.map((item) => ({
+            name: item,
+            code: item,
+          }));
+          setSubstations(allSubStation);
+        })
+        .catch((error) => {});
+    }
+  }, [startDate, endDate]);
 
   return (
     <>
@@ -90,11 +122,16 @@ export default function VoltageData() {
             <Button
               label="Fetch Data"
               className="p-button-rounded p-button-success"
+              onClick={fetchVoltageData}
             />
           </div>
         </div>
         <Divider />
-        <PlotData />
+        <PlotData
+          voltageBus1={voltageBus1}
+          voltageBus2={voltageBus2}
+          allDateTime={allDateTime}
+        />
       </Fieldset>
     </>
   );
